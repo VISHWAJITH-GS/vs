@@ -18,17 +18,28 @@ if (!process.env.GEMINI_API_KEY) {
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const allowedDevOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+const configuredFrontendOrigins = (process.env.FRONTEND_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedDevOrigin.test(origin)) {
+    return true;
+  }
+
+  return configuredFrontendOrigins.includes(origin);
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow server-to-server and curl/Postman requests without an Origin header.
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
-
-      if (allowedDevOrigin.test(origin)) {
+      if (isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }
@@ -38,6 +49,14 @@ app.use(
   })
 );
 app.use(express.json({ limit: "2mb" }));
+
+app.get("/api/health", (_req, res) => {
+  res.json({
+    ok: true,
+    service: "resume-job-fit-backend",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 const upload = multer({
   storage: multer.memoryStorage(),

@@ -1,7 +1,6 @@
 import React from 'react';
 import SectionCard from './SectionCard';
 import JobMatches from '../JobMatches';
-import RevisionVault from './RevisionVault';
 
 function SalaryInsights({ insights }) {
   if (!Array.isArray(insights) || insights.length === 0) return null;
@@ -70,14 +69,6 @@ const OpportunitiesPage = ({
   onSelectJob,
   salaryInsights,
   careerRecommendations,
-  revisions,
-  currentRevision,
-  compareRevisionId,
-  onCompareRevisionChange,
-  onSaveCurrent,
-  canSaveCurrent,
-  onRestoreRevision,
-  onDeleteRevision,
 }) => {
   return (
     <div className="page-stack">
@@ -92,17 +83,6 @@ const OpportunitiesPage = ({
           <Recommendations recommendations={careerRecommendations} />
         </SectionCard>
       </div>
-
-      <RevisionVault
-        revisions={revisions}
-        currentRevision={currentRevision}
-        compareRevisionId={compareRevisionId}
-        onCompareRevisionChange={onCompareRevisionChange}
-        onSaveCurrent={onSaveCurrent}
-        canSaveCurrent={canSaveCurrent}
-        onRestoreRevision={onRestoreRevision}
-        onDeleteRevision={onDeleteRevision}
-      />
     </div>
   );
 };

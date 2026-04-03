@@ -43,11 +43,25 @@ const categorizeSkills = (skills) => {
 };
 
 const SkillRadarChart = ({ matchedSkills, missingSkills }) => {
-  if (!matchedSkills || !missingSkills) return null;
+  if (!matchedSkills || !missingSkills) {
+    return (
+      <div className="glass-panel feature-card h-full suggestions-panel">
+        <h2 className="section-title">Skill Radar</h2>
+        <p className="muted-text empty-state">Run analysis to visualize skill distribution.</p>
+      </div>
+    );
+  }
   
   const allJobSkills = [...matchedSkills, ...missingSkills];
   
-  if (allJobSkills.length === 0) return null;
+  if (allJobSkills.length === 0) {
+    return (
+      <div className="glass-panel feature-card h-full suggestions-panel">
+        <h2 className="section-title">Skill Radar</h2>
+        <p className="muted-text empty-state">No skill data yet. Upload and analyze a resume to populate this chart.</p>
+      </div>
+    );
+  }
 
   const requiredCounts = categorizeSkills(allJobSkills);
   const candidateCounts = categorizeSkills(matchedSkills);
@@ -63,7 +77,7 @@ const SkillRadarChart = ({ matchedSkills, missingSkills }) => {
   const filteredData = data.filter(d => d.JobRequired > 0 || d.Candidate > 0);
 
   return (
-    <div className="glass-panel h-full" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
+    <div className="glass-panel feature-card h-full" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
       <h2 className="section-title" style={{ alignSelf: 'flex-start', width: '100%' }}>Skill Radar</h2>
       
       <div style={{ width: '100%', minWidth: 0, height: '320px', marginTop: 'auto', marginBottom: 'auto' }}>
