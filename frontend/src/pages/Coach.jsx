@@ -7,6 +7,7 @@ const Coach = () => {
     analysis,
     handleRewriteResume,
     isRewriting,
+    hasRequestedRewrite,
     chatMessages,
     handleSendChat,
     quickPrompts,
@@ -18,6 +19,7 @@ const Coach = () => {
       rewrittenResume={analysis.rewrittenResume}
       onRewrite={handleRewriteResume}
       loadingRewrite={isRewriting}
+      hasRequestedRewrite={hasRequestedRewrite}
       messages={chatMessages}
       onSend={handleSendChat}
       quickPrompts={quickPrompts}

@@ -1,65 +1,78 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
+import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCareer } from '../context/CareerContext'
+import LandingNavbar from '../components/landing/LandingNavbar'
+import HeroSection from '../components/landing/HeroSection'
+import ProblemSection from '../components/landing/ProblemSection'
+import SolutionSection from '../components/landing/SolutionSection'
+import HowItWorksSection from '../components/landing/HowItWorksSection'
+import DashboardPreviewSection from '../components/landing/DashboardPreviewSection'
+import DemoSection from '../components/landing/DemoSection'
+import InnovationSection from '../components/landing/InnovationSection'
+import FinalCTASection from '../components/landing/FinalCTASection'
+import LandingFooter from '../components/landing/LandingFooter'
+import '../styles/landing.css'
 
 const Landing = () => {
   const navigate = useNavigate()
-  const { uploadLabel, handleFileUpload, isAnalyzing, error } = useCareer()
+  const fileInputRef = useRef(null)
+  const { uploadLabel, handleFileUpload, isAnalyzing, error, analysis } = useCareer()
 
-  const handleLandingUpload = async (event) => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [])
+
+  const handleUploadChange = async (event) => {
     await handleFileUpload(event)
     navigate('/dashboard')
   }
 
+  const openUploadPicker = () => {
+    if (!isAnalyzing) {
+      fileInputRef.current?.click()
+    }
+  }
+
+  const scrollToDemo = () => {
+    const node = document.getElementById('demo')
+    node?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
-    <div className="app-shell">
+    <div className="app-shell landing-page" id="home">
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
+      <div className="ambient ambient-three" />
 
       <div className="container hero-layout">
-        <Navbar />
-        <header className="hero-panel glass-panel">
-          <div className="hero-copy">
-            <p className="eyebrow">AI Career Intelligence Platform</p>
-            <h1 className="glass-title">Resume to Role Intelligence</h1>
-            <p className="glass-subtitle">
-              Upload a resume, inspect the fit, and move into the dashboard to analyze gaps,
-              opportunities, and coaching feedback.
-            </p>
-            <div>
-              <label className="upload-label upload-inline" htmlFor="landing-resume-upload">
-                <input
-                  id="landing-resume-upload"
-                  type="file"
-                  accept="application/pdf,.txt"
-                  onChange={handleLandingUpload}
-                  disabled={isAnalyzing}
-                  className="file-input"
-                />
-                {isAnalyzing ? 'Analyzing...' : uploadLabel}
-              </label>
-            </div>
-            {error ? <p className="muted-text">{error}</p> : null}
-          </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/pdf,.txt"
+          onChange={handleUploadChange}
+          disabled={isAnalyzing}
+          className="file-input"
+        />
 
-          <section className="glass-panel feature-card">
-            <div className="feature-card-header">
-              <div>
-                <h2 className="section-title">Start Here</h2>
-                <p className="section-caption">Upload a PDF or TXT resume and jump directly into your dashboard report.</p>
-              </div>
-            </div>
-            <div className="subpanel">
-              <p className="muted-text">
-                Already have a draft? Continue from where you left off and open your stored analysis workflow.
-              </p>
-              <Link className="btn" to="/dashboard">
-                Continue to Dashboard
-              </Link>
-            </div>
-          </section>
-        </header>
+        <LandingNavbar onUploadClick={openUploadPicker} isAnalyzing={isAnalyzing} />
+
+        <HeroSection
+          onUploadClick={openUploadPicker}
+          onViewDemo={scrollToDemo}
+          isAnalyzing={isAnalyzing}
+          uploadLabel={uploadLabel}
+          analysis={analysis}
+          error={error}
+        />
+
+        <ProblemSection />
+        <SolutionSection />
+        <HowItWorksSection />
+        <DashboardPreviewSection />
+        <DemoSection onUploadClick={openUploadPicker} isAnalyzing={isAnalyzing} uploadLabel={uploadLabel} />
+        <InnovationSection />
+        <FinalCTASection onUploadClick={openUploadPicker} isAnalyzing={isAnalyzing} />
+        <LandingFooter />
       </div>
     </div>
   )

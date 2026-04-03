@@ -1,6 +1,23 @@
 import React from 'react';
 
-const RewritePanel = ({ rewrittenResume, onRewrite, loadingRewrite }) => {
+const RewritePanel = ({ rewrittenResume, onRewrite, loadingRewrite, hasRequestedRewrite }) => {
+  if (!hasRequestedRewrite) {
+    return (
+      <section className="glass-panel feature-card">
+        <div className="feature-card-header">
+          <div>
+            <h2 className="section-title">AI Resume Rewriter</h2>
+            <p className="section-caption">Generate a clearer, more measurable, job-focused version of the resume.</p>
+          </div>
+          <button className="btn primary" onClick={onRewrite} disabled={loadingRewrite} type="button">
+            {loadingRewrite ? 'Rewriting...' : 'Generate Rewrite'}
+          </button>
+        </div>
+        <p className="muted-text">Rewrite panel stays closed until you request a rewrite.</p>
+      </section>
+    );
+  }
+
   return (
     <section className="glass-panel feature-card">
       <div className="feature-card-header">
