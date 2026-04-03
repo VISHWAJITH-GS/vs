@@ -107,6 +107,7 @@ export const CareerProvider = ({ children }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isRewriting, setIsRewriting] = useState(false)
   const [isChatting, setIsChatting] = useState(false)
+  const [hasRequestedRewrite, setHasRequestedRewrite] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -153,6 +154,7 @@ export const CareerProvider = ({ children }) => {
   const clearReport = () => {
     setAnalysis(emptyReport)
     setSelectedJob('')
+    setHasRequestedRewrite(false)
   }
 
   const analyzeResume = async (textToAnalyze = editableResumeText || resumeText) => {
@@ -235,6 +237,8 @@ export const CareerProvider = ({ children }) => {
   }
 
   const handleRewriteResume = async () => {
+    setHasRequestedRewrite(true)
+
     const textToRewrite = editableResumeText || resumeText
     if (!textToRewrite.trim()) {
       setError('Upload or paste resume text before requesting a rewrite.')
@@ -375,6 +379,7 @@ export const CareerProvider = ({ children }) => {
     isAnalyzing,
     isRewriting,
     isChatting,
+    hasRequestedRewrite,
     targetRole,
     editableResumeText,
     resumeText,
