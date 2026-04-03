@@ -218,6 +218,38 @@ h6 {
   font-weight: 700;
 }
 
+.floating-coach-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #04131a;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+  box-shadow: 0 14px 36px rgba(45, 212, 191, 0.26);
+  z-index: 60;
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floating-coach-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.05);
+}
+
+.floating-coach-btn.active {
+  box-shadow: 0 0 0 2px rgba(3, 19, 26, 0.75), 0 18px 40px rgba(45, 212, 191, 0.3);
+}
+
+.floating-coach-icon {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
 .page-banner {
   padding: 18px 22px;
   display: flex;
@@ -1052,6 +1084,14 @@ h6 {
 @media (max-width: 720px) {
   .app-shell {
     padding-top: 20px;
+
+  }
+
+  .floating-coach-btn {
+    width: 52px;
+    height: 52px;
+    right: 16px;
+    bottom: 16px;
   }
 
   .container {

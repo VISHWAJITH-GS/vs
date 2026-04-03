@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import DashboardNav from '../components/dashboard/DashboardNav'
@@ -51,6 +52,15 @@ const DashboardLayout = () => {
 
         <Outlet />
       </div>
+
+      <Link
+        to="/dashboard/coach"
+        className={`floating-coach-btn ${location.pathname === '/dashboard/coach' ? 'active' : ''}`}
+        aria-label="Chat with coach"
+        title="Chat with Coach"
+      >
+        <span className="floating-coach-icon" aria-hidden="true">💬</span>
+      </Link>
     </div>
   )
 }
