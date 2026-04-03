@@ -91,18 +91,18 @@ const RevisionVault = ({
   const comparedRevision = revisions.find((revision) => revision.id === compareRevisionId) || null;
 
   return (
-    <section className="glass-panel feature-card">
+    <section className="glass-panel feature-card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div className="feature-card-header">
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h2 className="section-title">Revision Vault</h2>
-          <p className="section-caption">Save resume versions, restore a previous draft, and compare results side by side.</p>
+          <p className="section-caption" style={{ lineHeight: '1.6' }}>Save resume versions, restore a previous draft, and compare results side by side.</p>
         </div>
         <button type="button" className="btn primary" onClick={onSaveCurrent} disabled={!canSaveCurrent}>
           Save Current Revision
         </button>
       </div>
 
-      <div className="revision-compare-toolbar">
+      <div className="revision-compare-toolbar" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <label className="field-label" htmlFor="compare-revision">
           Compare against saved revision
         </label>
@@ -136,7 +136,7 @@ const RevisionVault = ({
             />
           ))
         ) : (
-          <p className="muted-text">No revisions saved yet. Generate a report, then save the version you want to keep.</p>
+          <p className="muted-text" style={{ lineHeight: '1.7' }}>No revisions saved yet. Generate a report, then save the version you want to keep.</p>
         )}
       </div>
     </section>
