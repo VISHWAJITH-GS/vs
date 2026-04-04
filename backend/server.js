@@ -544,8 +544,16 @@ app.post("/api/career-coach", async (req, res) => {
       .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
       .join("\n");
 
+    // Detect language of the latest user message
+    const lastUserMessage = [...normalizedMessages].reverse().find((m) => m.role === "user");
+    const isTamil = lastUserMessage && /[\u0B80-\u0BFF]/.test(lastUserMessage.content);
+    const languageInstruction = isTamil
+      ? "IMPORTANT: The user wrote in Tamil. You MUST reply entirely in Tamil."
+      : "IMPORTANT: The user wrote in English. You MUST reply entirely in English.";
+
     const prompt = `You are a practical AI career coach.
 Respond conversationally but keep the answer concise and actionable.
+${languageInstruction}
 Return ONLY JSON matching this schema:
 {
   "reply": "string",
