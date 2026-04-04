@@ -2,36 +2,54 @@ import React from 'react';
 
 const SkillGap = ({ matchedSkills, missingSkills }) => {
   return (
-    <div className="glass-panel h-full gap-section">
-      <h2 className="section-title">Skill Gap Analysis</h2>
-      
-      <div>
-        <h3 className="glass-subtitle mb-6" style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Matched Skills</h3>
+    <div className="glass-panel h-full" style={{ padding: '24px', overflow: 'hidden', boxSizing: 'border-box' }}>
+      <h2 className="section-title" style={{ marginBottom: '20px' }}>Skill Gap Analysis</h2>
+
+      <div style={{ marginBottom: '20px' }}>
+        <h3 style={{
+          fontSize: '1rem',
+          fontWeight: '600',
+          color: 'var(--accent-primary)',
+          marginBottom: '10px',
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+        }}>
+          Matched Skills
+        </h3>
         {matchedSkills && matchedSkills.length > 0 ? (
-          <div className="tags-container">
+          <div className="tags-container" style={{ flexWrap: 'wrap', overflowWrap: 'break-word' }}>
             {matchedSkills.map((skill, index) => (
-              <span key={index} className="tag green">
+              <span key={index} className="tag green" style={{ wordBreak: 'break-word', maxWidth: '100%' }}>
                 {skill}
               </span>
             ))}
           </div>
         ) : (
-          <p style={{ color: 'var(--text-secondary)' }}>No matched skills found.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem' }}>No matched skills found.</p>
         )}
       </div>
 
-      <div className="mt-8">
-        <h3 className="glass-subtitle mb-6" style={{ fontSize: '1.2rem', marginBottom: '10px' }}>Missing Skills</h3>
+      <div>
+        <h3 style={{
+          fontSize: '1rem',
+          fontWeight: '600',
+          color: 'var(--accent-warm)',
+          marginBottom: '10px',
+          letterSpacing: '0.04em',
+          textTransform: 'uppercase',
+        }}>
+          Missing Skills
+        </h3>
         {missingSkills && missingSkills.length > 0 ? (
-          <div className="tags-container">
+          <div className="tags-container" style={{ flexWrap: 'wrap', overflowWrap: 'break-word' }}>
             {missingSkills.map((skill, index) => (
-              <span key={index} className="tag red">
+              <span key={index} className="tag red" style={{ wordBreak: 'break-word', maxWidth: '100%' }}>
                 {skill}
               </span>
             ))}
           </div>
         ) : (
-          <p style={{ color: 'var(--text-secondary)' }}>No missing skills! You're a perfect match.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem' }}>No missing skills! You're a perfect match.</p>
         )}
       </div>
     </div>

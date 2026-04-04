@@ -3,27 +3,27 @@ import React from 'react';
 const RewritePanel = ({ rewrittenResume, onRewrite, loadingRewrite, hasRequestedRewrite }) => {
   if (!hasRequestedRewrite) {
     return (
-      <section className="glass-panel feature-card">
+      <section className="glass-panel feature-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div className="feature-card-header">
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <h2 className="section-title">AI Resume Rewriter</h2>
-            <p className="section-caption">Generate a clearer, more measurable, job-focused version of the resume.</p>
+            <p className="section-caption" style={{ lineHeight: '1.6' }}>Generate a clearer, more measurable, job-focused version of the resume.</p>
           </div>
           <button className="btn primary" onClick={onRewrite} disabled={loadingRewrite} type="button">
             {loadingRewrite ? 'Rewriting...' : 'Generate Rewrite'}
           </button>
         </div>
-        <p className="muted-text">Rewrite panel stays closed until you request a rewrite.</p>
+        <p className="muted-text" style={{ lineHeight: '1.7' }}>Rewrite panel stays closed until you request a rewrite.</p>
       </section>
     );
   }
 
   return (
-    <section className="glass-panel feature-card">
+    <section className="glass-panel feature-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <div className="feature-card-header">
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h2 className="section-title">AI Resume Rewriter</h2>
-          <p className="section-caption">Generate a clearer, more measurable, job-focused version of the resume.</p>
+          <p className="section-caption" style={{ lineHeight: '1.6' }}>Generate a clearer, more measurable, job-focused version of the resume.</p>
         </div>
         <button className="btn primary" onClick={onRewrite} disabled={loadingRewrite} type="button">
           {loadingRewrite ? 'Rewriting...' : 'Refresh Rewrite'}
