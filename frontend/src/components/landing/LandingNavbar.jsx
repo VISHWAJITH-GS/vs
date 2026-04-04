@@ -14,7 +14,6 @@ const LandingNavbar = ({ onUploadClick, isAnalyzing }) => {
         <a href="#features" className="landing-link">Features</a>
         <a href="#how-it-works" className="landing-link">How It Works</a>
         <Link to="/dashboard" className="landing-link">Dashboard</Link>
-        <Link to="/pricing" className="landing-link">Pricing</Link>
       </div>
 
       <button className="btn primary" type="button" onClick={onUploadClick} disabled={isAnalyzing}>
