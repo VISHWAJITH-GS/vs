@@ -4,11 +4,11 @@ const SkillList = ({ skills }) => {
   if (!skills || skills.length === 0) return null;
 
   return (
-    <div className="glass-panel" style={{ padding: '24px', marginTop: '24px', overflow: 'hidden', boxSizing: 'border-box' }}>
-      <h2 className="section-title" style={{ marginBottom: '20px' }}>Extracted Skills</h2>
-      <div className="tags-container" style={{ flexWrap: 'wrap', overflowWrap: 'break-word' }}>
+    <div className="glass-panel mt-8">
+      <h2 className="section-title">Extracted Skills</h2>
+      <div className="tags-container">
         {skills.map((skill, index) => (
-          <span key={index} className="tag blue" style={{ wordBreak: 'break-word', maxWidth: '100%' }}>
+          <span key={index} className="tag blue">
             {skill}
           </span>
         ))}

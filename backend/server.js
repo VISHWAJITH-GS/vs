@@ -1,16 +1,16 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import multer from "multer";
 import dotenv from "dotenv";
 import pdfParse from "pdf-parse";
 import { GoogleGenAI } from "@google/genai";
-
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
@@ -828,14 +828,12 @@ app.post("/api/suggestions", async (req, res) => {
   }
 });
 
-const frontendDistPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendDistPath));
+// Serve static assets from frontend
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api/")) {
-    return next();
-  }
-  res.sendFile(path.join(frontendDistPath, "index.html"));
+// Fallback to index.html for React Router
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 app.use((error, _req, res, _next) => {
