@@ -166,6 +166,50 @@ function buildSearchUrl(role) {
   return `https://www.google.com/search?q=site%3Alinkedin.com%2Fjobs+OR+site%3Aindeed.com+${query}`;
 }
 
+function buildPlatformLinks(role, skills = []) {
+  const cleanedRole = coerceString(role, "job");
+  const topSkills = toStringArray(skills).slice(0, 3);
+  const query = [cleanedRole, ...topSkills, "jobs"].filter(Boolean).join(" ");
+  const encodedQuery = encodeURIComponent(query);
+  const encodedLocation = encodeURIComponent("Remote");
+
+  return [
+    {
+      platform: "LinkedIn",
+      url: `https://www.linkedin.com/jobs/search/?keywords=${encodedQuery}&location=${encodedLocation}`,
+    },
+    {
+      platform: "Indeed",
+      url: `https://in.indeed.com/jobs?q=${encodedQuery}&l=${encodedLocation}`,
+    },
+    {
+      platform: "Glassdoor",
+      url: `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${encodedQuery}`,
+    },
+    {
+      platform: "Naukri",
+      url: `https://www.naukri.com/jobs-in-india?k=${encodedQuery}`,
+    },
+  ];
+}
+
+function normalizePlatformLinks(platformLinks, role, skills = []) {
+  const fallbackLinks = buildPlatformLinks(role, skills);
+
+  if (!Array.isArray(platformLinks) || !platformLinks.length) {
+    return fallbackLinks;
+  }
+
+  const normalizedLinks = platformLinks
+    .map((item) => ({
+      platform: coerceString(item?.platform),
+      url: coerceString(item?.url),
+    }))
+    .filter((item) => item.platform && item.url);
+
+  return normalizedLinks.length ? normalizedLinks : fallbackLinks;
+}
+
 function clampScore(value) {
   return Math.max(0, Math.min(100, Math.round(toNumber(value, 0))));
 }
@@ -315,6 +359,7 @@ function defaultFallbackAnalysis(resumeText, targetRole = "") {
             description: "A reasonable fallback match based on the target role provided.",
             searchQuery: `${targetRole} jobs remote`,
             searchUrl: buildSearchUrl(targetRole),
+            platformLinks: buildPlatformLinks(targetRole, extractedSkills),
           },
         ]
       : [],
@@ -412,6 +457,11 @@ function normalizeAnalysisResult(data, resumeText, targetRole = "") {
           description: coerceString(item?.description, "No description returned."),
           searchQuery: coerceString(item?.searchQuery, `${coerceString(item?.role, targetRole)} jobs`),
           searchUrl: coerceString(item?.searchUrl, buildSearchUrl(coerceString(item?.role, targetRole))),
+          platformLinks: normalizePlatformLinks(
+            item?.platformLinks,
+            coerceString(item?.role, targetRole),
+            toStringArray(parsedResume.skills)
+          ),
         }))
       : [],
     salaryInsights: Array.isArray(data?.salaryInsights)
@@ -476,7 +526,16 @@ Analyze the resume text and return ONLY a JSON object with the following schema:
     "fullText": "string"
   },
   "jobMatches": [
-    { "role": "string", "score": 0, "description": "string", "searchQuery": "string", "searchUrl": "string" }
+    {
+      "role": "string",
+      "score": 0,
+      "description": "string",
+      "searchQuery": "string",
+      "searchUrl": "string",
+      "platformLinks": [
+        { "platform": "LinkedIn", "url": "https://..." }
+      ]
+    }
   ],
   "salaryInsights": [
     { "role": "string", "range": "string", "currency": "string", "experienceLevel": "string", "marketTrend": "string", "notes": "string" }
@@ -488,6 +547,7 @@ Analyze the resume text and return ONLY a JSON object with the following schema:
 }
 
 Use the target role, if provided, to bias the analysis toward relevant roles, skills, salary ranges, and job matches.
+For each item in "jobMatches", include practical real-world links in "platformLinks" and prioritize platforms like LinkedIn, Indeed, Glassdoor, and Naukri.
 Keep all arrays concise and practical.
 
 Target Role: ${targetRole || "Not provided"}
@@ -630,24 +690,13 @@ app.post("/api/career-coach", async (req, res) => {
       .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
       .join("\n");
 
-    // Detect language of the latest user message
-    const lastUserMessage = [...normalizedMessages].reverse().find((m) => m.role === "user");
-    const isTamil = lastUserMessage && /[\u0B80-\u0BFF]/.test(lastUserMessage.content);
-    const languageInstruction = isTamil
-      ? "IMPORTANT: The user wrote in Tamil. You MUST reply entirely in Tamil."
-      : "IMPORTANT: The user wrote in English. You MUST reply entirely in English.";
-
     const prompt = `You are a practical AI career coach.
 Respond conversationally but keep the answer concise and actionable.
-<<<<<<< HEAD
 You MUST mirror the user's input language style based on "Reply Language Style".
 - If style is "english", reply fully in English.
 - If style is "tamil", reply fully in Tamil script.
 - If style is "tanglish", reply in Tanglish (Tamil written in English letters), not Tamil script.
 Apply the same style rule to both "reply" and "suggestions".
-=======
-${languageInstruction}
->>>>>>> b1be304bf42a14bf1da656a27fccf55285fb72f7
 Return ONLY JSON matching this schema:
 {
   "reply": "string",
