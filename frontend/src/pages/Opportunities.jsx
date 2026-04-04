@@ -12,6 +12,7 @@ const Opportunities = () => {
       onSelectJob={handleSelectJob}
       salaryInsights={analysis.salaryInsights}
       careerRecommendations={analysis.careerRecommendations}
+      analysis={analysis}
     />
   )
 }

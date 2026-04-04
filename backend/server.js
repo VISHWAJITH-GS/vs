@@ -136,6 +136,31 @@ function normalizeChatMessages(messages) {
     .filter(Boolean);
 }
 
+function detectLanguageStyle(text) {
+  if (typeof text !== "string") return "english";
+
+  const normalizedText = text.trim();
+  if (!normalizedText) return "english";
+
+  const hasTamilScript = /[\u0B80-\u0BFF]/.test(normalizedText);
+  const hasEnglishLetters = /[A-Za-z]/.test(normalizedText);
+
+  if (hasTamilScript && !hasEnglishLetters) {
+    return "tamil";
+  }
+
+  if (hasTamilScript && hasEnglishLetters) {
+    return "tanglish";
+  }
+
+  const tanglishMarkers = /\b(enna|epdi|eppadi|inga|anga|unga|ungal|nan|naan|nalla|venum|venuma|iruku|irukku|ponga|vaanga|seri|romba|konjam|saptiya|macha|thambi|akka|anna|ipo|ippo|apdi|ippadi|idhu|adhu|yen|ennaiku)\b/i;
+  if (tanglishMarkers.test(normalizedText)) {
+    return "tanglish";
+  }
+
+  return "english";
+}
+
 function buildSearchUrl(role) {
   const query = encodeURIComponent(`${role} jobs remote`);
   return `https://www.google.com/search?q=site%3Alinkedin.com%2Fjobs+OR+site%3Aindeed.com+${query}`;
@@ -161,6 +186,62 @@ async function generateJsonFromGemini(prompt) {
 
   const rawText = extractJsonText(response);
   return parseModelJson(rawText);
+}
+
+async function adaptCoachResponseLanguage(payload, languageStyle) {
+  if (!payload || typeof payload !== "object") {
+    return {
+      reply: "I can help with resume edits, role targeting, and skill planning.",
+      suggestions: [],
+    };
+  }
+
+  const style = ["english", "tamil", "tanglish"].includes(languageStyle)
+    ? languageStyle
+    : "english";
+
+  if (style === "english") {
+    return {
+      reply: coerceString(payload.reply, "I can help with resume edits, role targeting, and skill planning."),
+      suggestions: toStringArray(payload.suggestions),
+    };
+  }
+
+  const prompt = `You are a strict language-style formatter.
+Rewrite the given content to match the exact target style while preserving meaning.
+
+Rules:
+- Keep intent and practical advice unchanged.
+- Keep concise wording.
+- Output ONLY JSON with this schema:
+{
+  "reply": "string",
+  "suggestions": ["string"]
+}
+- Target style: ${style}
+- If target style is "tamil", write entirely in Tamil script.
+- If target style is "tanglish", write Tamil in English letters only (no Tamil script).
+
+Input JSON:
+${JSON.stringify({
+    reply: coerceString(payload.reply),
+    suggestions: toStringArray(payload.suggestions),
+  })}`;
+
+  try {
+    const converted = await generateJsonFromGemini(prompt);
+    return {
+      reply: coerceString(converted?.reply, coerceString(payload.reply)),
+      suggestions: toStringArray(converted?.suggestions).length
+        ? toStringArray(converted?.suggestions)
+        : toStringArray(payload.suggestions),
+    };
+  } catch {
+    return {
+      reply: coerceString(payload.reply, "I can help with resume edits, role targeting, and skill planning."),
+      suggestions: toStringArray(payload.suggestions),
+    };
+  }
 }
 
 function defaultFallbackAnalysis(resumeText, targetRole = "") {
@@ -540,27 +621,46 @@ app.post("/api/career-coach", async (req, res) => {
       return res.status(400).json({ error: "messages must be a non-empty array." });
     }
 
+    const latestUserMessage = [...normalizedMessages]
+      .reverse()
+      .find((message) => message.role === "user")?.content;
+    const responseLanguageStyle = detectLanguageStyle(latestUserMessage || "");
+
     const conversation = normalizedMessages
       .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
       .join("\n");
 
     const prompt = `You are a practical AI career coach.
 Respond conversationally but keep the answer concise and actionable.
+You MUST mirror the user's input language style based on "Reply Language Style".
+- If style is "english", reply fully in English.
+- If style is "tamil", reply fully in Tamil script.
+- If style is "tanglish", reply in Tanglish (Tamil written in English letters), not Tamil script.
+Apply the same style rule to both "reply" and "suggestions".
 Return ONLY JSON matching this schema:
 {
   "reply": "string",
   "suggestions": ["string"]
 }
 
+Reply Language Style: ${responseLanguageStyle}
 Target Role: ${resolvedTargetRole || "Not provided"}
 Resume Context: ${resolvedResumeText ? resolvedResumeText.slice(0, 9000) : "No resume text provided"}
 Conversation:
 ${conversation}`;
 
     const data = await generateJsonFromGemini(prompt);
+    const localizedData = await adaptCoachResponseLanguage(
+      {
+        reply: coerceString(data?.reply, "I can help with resume edits, role targeting, and skill planning."),
+        suggestions: toStringArray(data?.suggestions),
+      },
+      responseLanguageStyle
+    );
+
     return res.json({
-      reply: coerceString(data?.reply, "I can help with resume edits, role targeting, and skill planning."),
-      suggestions: toStringArray(data?.suggestions),
+      reply: coerceString(localizedData?.reply, "I can help with resume edits, role targeting, and skill planning."),
+      suggestions: toStringArray(localizedData?.suggestions),
     });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Failed to generate coach response." });
