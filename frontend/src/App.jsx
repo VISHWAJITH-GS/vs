@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './index.css'
 import DashboardLayout from './layouts/DashboardLayout'
 import Landing from './pages/Landing'
-import Pricing from './pages/Pricing'
 import Overview from './pages/Overview'
 import Insights from './pages/Insights'
 import Opportunities from './pages/Opportunities'
@@ -16,7 +15,6 @@ function App() {
       <CareerProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/pricing" element={<Pricing />} />
 
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Overview />} />
