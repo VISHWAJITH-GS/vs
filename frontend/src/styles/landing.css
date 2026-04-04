@@ -18,9 +18,9 @@
   position: sticky;
   top: 16px;
   z-index: 30;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
   padding: 12px 14px;
 }
@@ -354,8 +354,8 @@
 
 @media (max-width: 1040px) {
   .landing-nav {
-    grid-template-columns: 1fr;
-    justify-items: start;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .landing-hero {

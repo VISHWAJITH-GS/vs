@@ -3,7 +3,7 @@ import React from 'react'
 const fallbackRoles = ['Product Analyst', 'Data Analyst', 'Business Intelligence Associate']
 const fallbackGaps = ['SQL optimization', 'stakeholder storytelling', 'A/B testing']
 
-const HeroSection = ({ onUploadClick, onViewDemo, isAnalyzing, uploadLabel, analysis, error }) => {
+const HeroSection = ({ onUploadClick, isAnalyzing, uploadLabel, analysis, error }) => {
   const score = analysis?.resumeScore?.overall || 74
   const roles = Array.isArray(analysis?.jobMatches) && analysis.jobMatches.length
     ? analysis.jobMatches.slice(0, 3).map((item) => item.role)
@@ -25,9 +25,7 @@ const HeroSection = ({ onUploadClick, onViewDemo, isAnalyzing, uploadLabel, anal
           <button className="btn primary" type="button" onClick={onUploadClick} disabled={isAnalyzing}>
             {isAnalyzing ? 'Analyzing...' : 'Upload Resume'}
           </button>
-          <button className="btn" type="button" onClick={onViewDemo}>
-            View Demo
-          </button>
+
         </div>
         <p className="landing-upload-note">{uploadLabel}</p>
         {error ? <p className="landing-error">{error}</p> : null}

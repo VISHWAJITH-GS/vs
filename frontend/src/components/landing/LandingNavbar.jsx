@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const LandingNavbar = ({ onUploadClick, isAnalyzing }) => {
+const LandingNavbar = () => {
   return (
     <nav className="landing-nav glass-panel">
       <Link to="/" className="landing-brand" aria-label="Resume to Role Intelligence home">
@@ -15,10 +15,6 @@ const LandingNavbar = ({ onUploadClick, isAnalyzing }) => {
         <a href="#how-it-works" className="landing-link">How It Works</a>
         <Link to="/dashboard" className="landing-link">Dashboard</Link>
       </div>
-
-      <button className="btn primary" type="button" onClick={onUploadClick} disabled={isAnalyzing}>
-        {isAnalyzing ? 'Analyzing...' : 'Upload Resume'}
-      </button>
     </nav>
   )
 }
