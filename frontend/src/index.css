@@ -657,6 +657,40 @@ h6 {
   font-size: 1.18rem;
 }
 
+.job-description {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.job-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.job-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #bff7ef;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.24);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.job-link:hover {
+  transform: translateY(-1px);
+  background: rgba(45, 212, 191, 0.2);
+  border-color: rgba(45, 212, 191, 0.38);
+}
+
 .flex-center {
   display: flex;
   align-items: center;
